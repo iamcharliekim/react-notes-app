@@ -1,0 +1,17 @@
+.searchNotes {
+	width: 100%;
+	border-bottom: 1px solid white;
+	padding: 10px 0;
+	text-decoration: none;
+	color: white;
+	cursor: pointer
+}
+
+.searchNotes:hover {
+	background-color: #C3DFE0;
+	color: #0D0221
+}
+
+.searchNotes input{
+	margin-left: 5px
+}

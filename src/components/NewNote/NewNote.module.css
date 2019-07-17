@@ -1,0 +1,26 @@
+.newNote {
+	width: 80%;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	margin: 50px auto;
+	background-color: #FCF7FF;
+	padding: 15px;
+	border: 1px solid #0D0221;
+	color: #0D0221
+}
+
+.newNote label { 
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+}
+
+.newNote input {
+	margin-top: 5px;
+}
+
+.newNote textarea {
+	margin-top: 5px;
+}

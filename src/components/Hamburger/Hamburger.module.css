@@ -1,0 +1,11 @@
+.hamburger {
+     cursor: pointer;
+	padding-right: 10px;
+	color: #CF9893;
+}
+ .hamburger div {
+     width: 35px;
+     height: 5px;
+     background-color: #C3DFE0;
+     margin: 5px 
+}

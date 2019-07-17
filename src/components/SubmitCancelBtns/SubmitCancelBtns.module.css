@@ -1,0 +1,12 @@
+.submitCancelBtns {
+	width: 100%;
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	
+}
+
+.submitCancelBtns button { 
+	margin-right: 5px;
+	border: 1px solid gray;
+}

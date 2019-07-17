@@ -1,0 +1,34 @@
+.noteDiv {
+	width: 90%;
+	margin: 5px auto;
+	border: 1px solid black;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: flex-start;
+	padding: 10px;
+	background-color: #FCF7FF;
+	cursor: pointer
+}
+
+.noteDiv h1 {
+	margin: 5px 0
+}
+
+.noteDiv span {
+	font-size: 12px;
+	text-align: left;
+	
+}
+
+.noteDiv button {
+	cursor: pointer;
+	
+}
+
+.noteDiv:hover {
+	background-color: #3B3B58;
+	color: white;
+		border: 2px solid #FCF7FF;
+	
+}
