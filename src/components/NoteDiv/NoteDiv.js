@@ -4,7 +4,8 @@ import classes from './NoteDiv.module.css'
 class NoteDiv extends Component {
 	
 	componentDidMount(){
-		console.log(this.props)
+		console.log('componentDidMount')
+
 	}
 	
 	backHandler = () =>{

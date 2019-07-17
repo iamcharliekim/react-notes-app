@@ -4,7 +4,7 @@ import SubmitCancelBtns from '../SubmitCancelBtns/SubmitCancelBtns'
 
 class NewNote extends Component {
 	componentDidMount(){
-		console.log(this.props)
+		console.log('componentDidMount')
 	}
 	
 	render(){

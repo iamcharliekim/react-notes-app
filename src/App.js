@@ -19,6 +19,19 @@ class App extends Component {
 		editNote:false
 	}
 
+	componentDidMount() {
+		console.log('componentDidMount')
+		
+		this.axiosGet()
+		
+	}
+			
+	componentDidUpdate(prevProps, prevState){
+		console.log('componentDidUpdate')
+		console.log('prevProps:',prevProps, 'prevState:', prevState)
+		
+	}
+
 	axiosGet = () => {
 		const URL = `https://react-notes-80e37.firebaseio.com/notes.json`
 		
@@ -42,18 +55,6 @@ class App extends Component {
 		
 	}
 
-	componentDidMount() {
-		
-		console.log('componentDidMount')
-		this.axiosGet()
-		
-	}
-			
-	componentDidUpdate(){
-		console.log('componentDidUpdate')
-		
-	}
-
 	hamburgerHandler = () => {
 		this.setState((prevState, props) => {
 			return {
@@ -61,7 +62,6 @@ class App extends Component {
 			}
 		})
 		
-		console.log(this.state)
 	}
 
 	postHandler = (newNote) => {
@@ -119,6 +119,7 @@ class App extends Component {
 				this.setState({
 					currentTitle: '',
 					currentBody: '',
+					currentID: '',
 					editNote: false
 				})
 				
@@ -140,9 +141,8 @@ class App extends Component {
 		this.setState({ currentBody: e.target.value })
 	}
 	
-	axiosDelete = (e, id) => {
-		e.preventDefault()
-				console.log('axiosDelete')
+	axiosDelete = (id) => {
+		console.log('axiosDelete')
 		const URL = `https://react-notes-80e37.firebaseio.com/notes/${id}.json`
 		
 		axios.delete(URL)
@@ -153,8 +153,11 @@ class App extends Component {
 		
 	}
 	
-	deleteNoteHandler = (id) => {
+	deleteNoteHandler = (e, id) => {
 		console.log('deleteNoteHandler')
+		
+		e.stopPropagation();
+		
 		let notesCopy = [...this.state.notes]
 		
 		let targetNoteIndex = notesCopy.findIndex(note => {
@@ -165,11 +168,13 @@ class App extends Component {
 					
 		notesCopy.splice(targetNoteIndex, 1)
 		
-		this.setState({notes: notesCopy})		
+		this.setState({notes: notesCopy})	
+		
+		//this.axiosDelete()
 	}
 	
 	editNoteHandler = (id) => {
-		
+		console.log('editNote')
 	
 		let notesCopy = [...this.state.notes]	
 		let targetNote = notesCopy.find(note=> note.dbKey === id)
@@ -187,7 +192,10 @@ class App extends Component {
 			editNote: false
 		})
 	}
+	
 	render(){
+		console.log('rendered')
+		
 		let hamburgerUnfold = null
 		if (this.state.unfold){
 			hamburgerUnfold = <HamburgerUnfold hamburgerHandler = {this.hamburgerHandler}/>
@@ -225,9 +233,9 @@ class App extends Component {
 					
 					<Route path="/" exact render ={ (props)=> <NoteList {...props} 
 						fetchedNotes = {this.state.notes}
-						deleteNoteHandler = {(e, id) => this.axiosDelete(e, id)}
+						deleteNoteHandler = {(id) => this.deleteNoteHandler(id)}
 						state = {this.state}
-						editNoteHandler = {(id)=> this.editNoteHandler(id)}
+						editNoteHandler = {(e, id)=> this.editNoteHandler(e, id)}
 						
 					
 						/> }
