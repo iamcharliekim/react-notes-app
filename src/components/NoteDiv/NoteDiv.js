@@ -4,7 +4,7 @@ import classes from './NoteDiv.module.css'
 class NoteDiv extends Component {
 	
 	componentDidMount(){
-		console.log('componentDidMount')
+		console.log(this.props)
 
 	}
 	
@@ -18,7 +18,7 @@ class NoteDiv extends Component {
 		let body = this.props.body
 
 		return (
-			<div className = {classes.noteDiv} id={this.props.dbKey} onClick = {(id)=> this.props.editNoteHandler(this.props.dbKey)}>
+			<div className = {classes.noteDiv} id={this.props.updated} onClick = {()=> this.props.editNoteHandler(this.props.dbKey)}>
 				<h1>{title}</h1>
 				<span>{updated}</span>
 				<p>{body}</p>

@@ -12,11 +12,13 @@ class App extends Component {
 	state = {
 		unfold: false,
 		notes: [],
+		filteredNotes: [],
 		currentTitle: '',
 		currentBody: '',
 		submitted: false,
 		currentID: '',
-		editNote:false
+		editNote:false,
+		search: false
 	}
 
 	componentDidMount() {
@@ -27,9 +29,19 @@ class App extends Component {
 	}
 			
 	componentDidUpdate(prevProps, prevState){
+
 		console.log('componentDidUpdate')
-		console.log('prevProps:',prevProps, 'prevState:', prevState)
+		console.log('this.state', this.state.notes, 'prevState:', prevState.notes)
+		 
+		let equal = this.state.notes.length === prevState.notes.length && this.state.notes.every((e, i) => e.updated === prevState.notes[i].updated);
 		
+		console.log(equal)
+
+		if (!equal){
+			this.axiosGet()
+		}
+		
+	
 	}
 
 	axiosGet = () => {
@@ -44,10 +56,12 @@ class App extends Component {
 										
 					let fetchedNotesArr = fetchedKeys.map(key => {
 						return {
-							...fetchedNotesObj[key],	
+							...fetchedNotesObj[key],
 							dbKey: key
 						}
 					})
+					
+					console.log(fetchedNotesArr)
 					
 					this.setState({notes:fetchedNotesArr})
 				}		
@@ -65,11 +79,25 @@ class App extends Component {
 	}
 
 	postHandler = (newNote) => {
+		let notesCopy = [...this.state.notes]
+		
+		let postedNoteIndex = notesCopy.findIndex(note => note.updated === newNote.updated)
+		
+		console.log(notesCopy)
+		
 		const URL = `https://react-notes-80e37.firebaseio.com/notes.json`
 		
 		axios.post(URL, newNote)
 			.then(response => {
 				console.log(response)
+			
+				notesCopy[postedNoteIndex].dbKey = response.data.name
+							
+				this.setState({
+					notes: notesCopy
+				})
+			
+				console.log(this.state.notes)
 
 		})
 	}
@@ -96,34 +124,39 @@ class App extends Component {
 				updated: updated,
 			}
 
-			stateCopy.notes.push(newNote)
 
 			if (!this.state.editNote){
+				stateCopy.notes.push(newNote)
 
 				this.setState({
 					notes: stateCopy.notes,
-					currentTitle: '',
-					currentBody: '',
-					submitted: true
-				})
-				
-				this.postHandler(newNote)	
-
-				console.log(this.state)
-			} else {
-				console.log(this.state.currentID)
-
-				let targetIndex = stateCopy.notes.findIndex(note => note.dbKey === this.state.currentID)
-				stateCopy.notes.splice(targetIndex, 1)
-				
-				this.setState({
 					currentTitle: '',
 					currentBody: '',
 					currentID: '',
 					editNote: false
 				})
 				
+				this.postHandler(newNote)	
+
+				console.log(this.state)
+			} else {
+				
+				let targetIndex = stateCopy.notes.findIndex(note => note.dbKey === this.state.currentID )
+				
+				stateCopy.notes[targetIndex] = newNote
+				
+				this.setState({
+					notes: stateCopy.notes,
+					currentTitle: '',
+					currentBody: '',
+					currentID: '',
+					editNote: false,
+					
+				})
+				
 				this.putHandler(newNote, this.state.currentID)
+
+				
 				
 				
 			}
@@ -141,12 +174,16 @@ class App extends Component {
 		this.setState({ currentBody: e.target.value })
 	}
 	
-	axiosDelete = (id) => {
-		console.log('axiosDelete')
+	axiosDelete = (e, id) => {
+		e.stopPropagation()
+		e.preventDefault()
+		console.log('axiosDelete', id)
 		const URL = `https://react-notes-80e37.firebaseio.com/notes/${id}.json`
 		
 		axios.delete(URL)
 			.then(response => {
+			
+				this.deleteNoteHandler(e, id)
 				console.log('axiosDelete finished')
 				
 		})
@@ -154,9 +191,7 @@ class App extends Component {
 	}
 	
 	deleteNoteHandler = (e, id) => {
-		console.log('deleteNoteHandler')
-		
-		e.stopPropagation();
+		console.log('deleteNoteHandler', id)
 		
 		let notesCopy = [...this.state.notes]
 		
@@ -170,16 +205,19 @@ class App extends Component {
 		
 		this.setState({notes: notesCopy})	
 		
-		//this.axiosDelete()
 	}
 	
 	editNoteHandler = (id) => {
-		console.log('editNote')
+		console.log('editNote', id)
 	
 		let notesCopy = [...this.state.notes]	
+		
+		console.log(notesCopy, id)
+
 		let targetNote = notesCopy.find(note=> note.dbKey === id)
 		
 		console.log(targetNote)
+		
 		this.setState({currentID: id, currentTitle: targetNote.title, currentBody: targetNote.body, editNote: true})
 		
 		
@@ -193,19 +231,57 @@ class App extends Component {
 		})
 	}
 	
+	clearNotesHandler = () => {
+		console.log('clear')
+		
+		this.setState({notes: []})
+
+		const URL = `https://react-notes-80e37.firebaseio.com/notes.json`
+			
+		axios.delete(URL)
+			.then(response => console.log(response))
+	}
+	
+	blurHandler = () => {
+		this.setState({search:false})
+	}
+	
+	searchNotesHandler = (e) => {
+		
+		const notesCopy = [...this.state.notes]
+		let searchQuery = e.target.value
+		
+		let searchResult = notesCopy.filter(note => {
+			return note.title.includes(searchQuery) || note.body.includes(searchQuery)
+		})
+		
+		console.log(searchResult)
+		
+		this.setState({
+				notes: searchResult
+		})
+	}
+	
+	
 	render(){
 		console.log('rendered')
 		
 		let hamburgerUnfold = null
 		if (this.state.unfold){
-			hamburgerUnfold = <HamburgerUnfold hamburgerHandler = {this.hamburgerHandler}/>
+			hamburgerUnfold = <HamburgerUnfold hamburgerHandler = {this.hamburgerHandler}
+												clearNotesHandler = {this.clearNotesHandler}
+												searchNotesHandler = {this.searchNotesHandler}
+												blurHandler = {this.blurHandler}
+								/>
 		}
 		
 		
 		return (
 			<BrowserRouter>
 				<div className="App">
-					<Navbar hamburgerUnfold = {this.hamburgerHandler}/>
+					<Navbar hamburgerUnfold = {this.hamburgerHandler}
+							clearNotesHandler = {this.clearNotesHandler}
+					/>
 					
 					{hamburgerUnfold}
 					
@@ -233,7 +309,8 @@ class App extends Component {
 					
 					<Route path="/" exact render ={ (props)=> <NoteList {...props} 
 						fetchedNotes = {this.state.notes}
-						deleteNoteHandler = {(id) => this.deleteNoteHandler(id)}
+						filteredNotes = {this.state.filteredNotes}
+						deleteNoteHandler = {(e, id) => this.axiosDelete(e, id)}
 						state = {this.state}
 						editNoteHandler = {(e, id)=> this.editNoteHandler(e, id)}
 						

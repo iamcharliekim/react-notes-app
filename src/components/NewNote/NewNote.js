@@ -8,6 +8,7 @@ class NewNote extends Component {
 	}
 	
 	render(){
+		console.log(this.props.stateCopy.editNote)
 		return (
 
 				<form className={classes.newNote} onSubmit={(e)=>{ 

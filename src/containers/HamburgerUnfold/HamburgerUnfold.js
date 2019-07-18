@@ -9,8 +9,10 @@ const hamburgerUnfold = (props) => {
 	return (
 		<div className={classes.hamburgerUnfold}>
 			<AddNote hamburgerHandler = {props.hamburgerHandler}/>
-			<ClearNotes/>
-			<SearchNotes/>
+			<ClearNotes clearNotesHandler = {props.clearNotesHandler}/>
+			<SearchNotes searchNotesHandler = {props.searchNotesHandler}
+						blurHandler = {props.blurHandler}
+			/>
 		</div>
 	
 	)

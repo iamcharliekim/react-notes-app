@@ -9,7 +9,7 @@ const searchNotes = (props) => {
 				Search: 
 			</label>
 			
-			<input type="text" id="search-notes"/>
+			<input type="text" id="search-notes" onChange={props.searchNotesHandler} />
 		</div>
 	)
 }

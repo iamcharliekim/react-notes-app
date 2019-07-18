@@ -9,7 +9,9 @@ const navbar = (props) => {
 	return (
 		<nav className={classes.navbar}>
 			<Logo/>
-			<Hamburger hamburgerUnfold = {props.hamburgerUnfold}/>
+			<Hamburger hamburgerUnfold = {props.hamburgerUnfold}
+						clearNotesHandler = {props.clearNotesHandler}
+			/>
 		</nav>
 	
 	)
